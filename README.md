@@ -1,1 +1,1 @@
-# cumple.M
+Este directorio está reservado para los modelos de personajes GLB/GLTF. No hay modelos incluidos: primero hay que elegir recursos humanos articulados, comprobar sus clips y guardar junto a cada uno la fuente, licencia y condiciones de redistribución.

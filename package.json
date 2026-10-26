@@ -1,0 +1,19 @@
+{
+  "name": "un-dia-en-flor",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "engines": { "node": ">=20.19.0" },
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build && node scripts/publish-root.mjs",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "gsap": "^3.14.2",
+    "three": "^0.180.0"
+  },
+  "devDependencies": {
+    "vite": "^7.1.12"
+  }
+}

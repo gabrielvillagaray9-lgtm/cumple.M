@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#f4eee2" />
+    <meta name="description" content="Una pequeña historia hecha de luz, flores y recuerdos." />
+    <title>Un día en flor — Una sorpresa para ti</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="./src/style.css" />
+  </head>
+  <body>
+    <div class="grain" aria-hidden="true"></div>
+    <header class="topbar">
+      <a class="wordmark" href="#inicio" aria-label="Un día en flor, inicio"><span class="wordmark-mark">✳</span> un día en flor</a>
+      <span class="topbar-note">UNA CARTA VISUAL · 01</span>
+      <button class="sound-button" id="replay" type="button" aria-label="Repetir la escena"><span>↻</span> Ver de nuevo</button>
+    </header>
+
+    <main>
+      <section class="cover scene" id="inicio" aria-labelledby="cover-title">
+        <div class="cover-copy">
+          <p class="eyebrow"><span class="eyebrow-line"></span> PARA CELEBRARTE, HOY Y SIEMPRE</p>
+          <h1 id="cover-title">Hay días<br />que <em>florecen</em><br />por ti.</h1>
+          <p class="cover-subtitle">Una pequeña sorpresa para guardar<br />lo bonito de estar aquí.</p>
+          <a class="discover-link" href="#flores"><span class="discover-icon">↓</span> Descubre tu sorpresa</a>
+        </div>
+        <div class="cover-image-wrap">
+          <div class="cover-image-photo photo-frame" data-photo="0">
+            <img src="./imágenes/IMG_E1439.JPG" alt="Retrato de familia durante una salida nocturna" fetchpriority="high" decoding="async" />
+          </div>
+          <div class="cover-stamp"><span>hecho</span><span>con</span><span class="stamp-script">cariño</span></div>
+          <p class="cover-caption">UNA HISTORIA EN CUATRO RECUERDOS <span>✳</span></p>
+        </div>
+        <div class="cover-index"><span>01</span><i></i><span>03</span></div>
+      </section>
+
+      <section class="flowers scene" id="flores" aria-labelledby="flower-title">
+        <div class="section-meta"><span>02 / UN GESTO</span><span>EL TIEMPO, MÁS DESPACIO</span></div>
+        <div class="flower-copy">
+          <p class="eyebrow">HECHAS PARA SEGUIR LA LUZ</p>
+          <h2 id="flower-title">Para ti,<br /><em>un ramo de sol.</em></h2>
+          <p class="flower-description">Hay regalos que no necesitan explicación. Solo un momento, unas flores, y todo lo que cabe en un gesto.</p>
+          <button class="flower-button" id="bloom" type="button"><span>✳</span> Volver a hacerlo</button>
+          <p class="scene-note">UNA ESCENA FLORAL EN 3D <span>·</span> MUEVE EL CURSOR PARA EXPLORAR</p>
+        </div>
+        <div class="flower-stage" id="flower-stage" aria-label="Un ramo tridimensional de girasoles que se abre suavemente">
+          <canvas id="flower-canvas"></canvas>
+          <div class="stage-halo"></div>
+          <span class="stage-label">un pequeño<br />gesto de luz <i>✳</i></span>
+          <div class="stage-grain"></div>
+        </div>
+        <div class="flower-side-note">01 — 03 <span>LA SORPRESA</span></div>
+      </section>
+
+      <section class="memories scene" id="recuerdos" aria-labelledby="memory-title">
+        <div class="memories-heading">
+          <div><p class="eyebrow">03 / LO QUE NOS QUEDA</p><h2 id="memory-title">Pequeñas escenas,<br /><em>grandes recuerdos.</em></h2></div>
+          <div class="memory-aside"><span class="aside-star">✳</span><p>Cuatro instantes.<br />Una historia que<br />sigue creciendo.</p></div>
+        </div>
+        <div class="memory-grid" id="memory-grid">
+          <button class="memory-card memory-card-tall" data-photo="1" type="button" aria-label="Ver recuerdo: atardecer junto al mar"><img src="./imágenes/WFZT7972.PNG" alt="Una pareja contempla la puesta de sol junto al mar" loading="lazy" decoding="async" /><span class="card-number">I</span></button>
+          <button class="memory-card memory-card-wide" data-photo="2" type="button" aria-label="Ver recuerdo: un beso frente al mar"><img src="./imágenes/NEDI4433.PNG" alt="Una pareja se besa frente al mar al atardecer" loading="lazy" decoding="async" /><span class="card-number">II</span></button>
+          <div class="memory-quote"><span>“</span><p>Los mejores días<br />se parecen un poco<br />a <em>quedarse.</em></p><small>UNA NOTA PARA ESTE DÍA</small></div>
+          <button class="memory-card memory-card-last" data-photo="3" type="button" aria-label="Ver recuerdo: un selfie divertido"><img src="./imágenes/LGFT9709.JPG" alt="Selfie divertido de la pareja" loading="lazy" decoding="async" /><span class="card-number">III</span></button>
+        </div>
+        <label class="upload-cta" for="photo-input"><span>+</span> Cambiar las fotografías <small>SOLO EN ESTE DISPOSITIVO</small></label>
+        <input id="photo-input" type="file" accept="image/*" multiple hidden />
+      </section>
+
+      <section class="closing scene" id="final" aria-labelledby="closing-title">
+        <div class="closing-sun" aria-hidden="true"></div>
+        <p class="eyebrow">UN DESEO, EN VOZ BAJITA</p>
+        <h2 id="closing-title">Que lo bueno<br />te <em>encuentre</em><br />una y otra vez.</h2>
+        <p class="closing-note">Feliz cumpleaños. <span>✳</span></p>
+        <a class="back-top" href="#inicio">VOLVER AL PRINCIPIO ↑</a>
+        <span class="closing-side">CON TODO EL CARIÑO DEL MUNDO</span>
+      </section>
+    </main>
+    <div class="photo-modal" id="photo-modal" aria-hidden="true"><button class="modal-close" type="button" aria-label="Cerrar foto">×</button><img alt="Recuerdo ampliado" /></div>
+    <script type="module" src="./src/main.js"></script>
+  </body>
+</html>
+
+
