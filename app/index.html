@@ -46,18 +46,25 @@
         </div>
       </section>
 
-      <section class="memories scene" id="recuerdos" aria-labelledby="memory-title">
-        <div class="memories-heading">
-          <h2 id="memory-title">Pequeñas escenas,<br /><em>grandes recuerdos.</em></h2>
-        </div>
+      <section class="memories scene" id="recuerdos" aria-label="Recuerdos">
         <div class="memory-grid" id="memory-grid">
           <button class="memory-card memory-card-tall" data-photo="1" type="button" aria-label="Ver recuerdo: atardecer junto al mar"><img src="./imágenes/WFZT7972.PNG" alt="Una pareja contempla la puesta de sol junto al mar" loading="lazy" decoding="async" /></button>
           <button class="memory-card memory-card-wide" data-photo="2" type="button" aria-label="Ver recuerdo: un beso frente al mar"><img src="./imágenes/NEDI4433.PNG" alt="Una pareja se besa frente al mar al atardecer" loading="lazy" decoding="async" /></button>
           <div class="memory-quote"><p>Te amo, mis ojitos lindos. 🫶🏼❤️</p></div>
           <button class="memory-card memory-card-last" data-photo="3" type="button" aria-label="Ver recuerdo: un selfie divertido"><img src="./imágenes/LGFT9709.JPG" alt="Selfie divertido de la pareja" loading="lazy" decoding="async" /></button>
         </div>
-        <label class="upload-cta" for="photo-input">Cambiar las fotografías</label>
-        <input id="photo-input" type="file" accept="image/*" multiple hidden />
+      </section>
+
+      <section class="surprise scene" id="sorpresa" aria-labelledby="surprise-title">
+        <button class="envelope" id="envelope" type="button" aria-expanded="false" aria-controls="surprise-message">
+          <span class="envelope-body" aria-hidden="true">
+            <span class="envelope-pocket"></span>
+            <span class="envelope-flap"></span>
+            <span class="envelope-seal">♥</span>
+          </span>
+          <span class="envelope-label" id="surprise-title">Tengo una cosita más para ti...</span>
+        </button>
+        <p class="surprise-message" id="surprise-message" aria-live="polite">Si pudiera volver a aquel día en que te conocí, volvería a elegir conocerte.</p>
       </section>
 
       <section class="closing scene" id="final" aria-label="Dedicatoria para Malak">
@@ -72,9 +79,11 @@
           <p>Me gusta eso de ti. Eres una persona increíble.</p>
           <p>Te amo, mis ojitos lindos. 🫶🏼❤️</p>
         </div>
+        <div class="final-magic" id="final-magic" aria-hidden="true"></div>
         <a class="back-top" href="#inicio">Volver arriba</a>
       </section>
     </main>
+    <div class="hearts-layer" id="hearts-layer" aria-hidden="true"></div>
     <div class="photo-modal" id="photo-modal" aria-hidden="true"><button class="modal-close" type="button" aria-label="Cerrar foto">×</button><img alt="Recuerdo ampliado" /></div>
     <script type="module" src="./src/main.js"></script>
   </body>

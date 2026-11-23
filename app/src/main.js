@@ -64,7 +64,7 @@ renderAge();
 setTimeout(scheduleTick, 1000 - (Date.now() % 1000) + 20);
 document.addEventListener('visibilitychange', () => { if (!document.hidden) renderAge(); });
 
-const revealNodes = gsap.utils.toArray('.cover-copy h1, .discover-link, .flower-copy h2, .birth-date, .age-counter, .counter-note, .flower-button, .memories-heading h2, .memory-card, .memory-quote, .letter p, .back-top');
+const revealNodes = gsap.utils.toArray('.cover-copy h1, .discover-link, .flower-copy h2, .birth-date, .age-counter, .counter-note, .flower-button, .memory-card, .memory-quote, .envelope, .letter p:not(:last-child), .back-top');
 if (!reducedMotion) {
   revealNodes.forEach((node) => gsap.from(node, {
     y: 16, opacity: 0, duration: 0.8, ease: 'power2.out',
@@ -73,43 +73,98 @@ if (!reducedMotion) {
   gsap.from('.cover-image-wrap', { y: 18, opacity: 0, duration: 1.1, delay: 0.2, ease: 'power2.out' });
 }
 
-// Personal photos stay in memory in this browser tab. Nothing is uploaded.
-const photoInput = document.querySelector('#photo-input');
-const photoTargets = [...document.querySelectorAll('[data-photo]')];
-const objectUrls = [];
-let photoStartIndex = 0;
-photoTargets.forEach((target) => {
-  const image = target.querySelector('img');
-  const markLoaded = () => target.classList.add('has-photo');
-  image.addEventListener('load', markLoaded, { once: true });
-  if (image.complete && image.naturalWidth > 0) markLoaded();
+// Corazones discretos: limitados, espaciados en el tiempo y nunca sobre los controles.
+const heartsLayer = document.querySelector('#hearts-layer');
+const heartColors = ['#fffdf7', '#fff8e9', '#f3d995', '#e8c779'];
+let lastHeartTime = 0;
+
+function spawnHearts(x, y, count = 1, throttled = true) {
+  if (reducedMotion || !heartsLayer) return;
+  const now = performance.now();
+  if (throttled && now - lastHeartTime < 380) return;
+  lastHeartTime = now;
+
+  const total = heartsLayer.querySelectorAll('.heart').length;
+  const available = Math.max(0, 18 - total);
+  for (let i = 0; i < Math.min(count, available); i += 1) {
+    const heart = document.createElement('span');
+    const size = 12 + Math.random() * 8;
+    heart.className = 'heart';
+    heart.textContent = '♥';
+    heart.style.setProperty('--x', `${x + (Math.random() - 0.5) * 22}px`);
+    heart.style.setProperty('--y', `${y + (Math.random() - 0.5) * 12}px`);
+    heart.style.setProperty('--drift', `${(Math.random() - 0.5) * 70}px`);
+    heart.style.setProperty('--rise', `${90 + Math.random() * 70}px`);
+    heart.style.setProperty('--rotate', `${(Math.random() - 0.5) * 30}deg`);
+    heart.style.setProperty('--size', `${size}px`);
+    heart.style.setProperty('--duration', `${3.1 + Math.random() * 1.2}s`);
+    heart.style.setProperty('--heart-color', heartColors[Math.floor(Math.random() * heartColors.length)]);
+    heart.addEventListener('animationend', () => heart.remove(), { once: true });
+    heartsLayer.appendChild(heart);
+  }
+}
+
+document.addEventListener('pointerdown', (event) => {
+  if (event.target.closest('#flower-stage') || event.target.closest('.photo-modal')) return;
+  spawnHearts(event.clientX, event.clientY, 1);
+}, { passive: true });
+
+// El sobre se abre sin ventana emergente: solo revela su mensaje.
+const surprise = document.querySelector('.surprise');
+const envelope = document.querySelector('#envelope');
+envelope.addEventListener('click', (event) => {
+  const opening = !surprise.classList.contains('is-open');
+  surprise.classList.toggle('is-open', opening);
+  envelope.classList.toggle('is-open', opening);
+  envelope.setAttribute('aria-expanded', String(opening));
+  if (opening) {
+    const rect = envelope.getBoundingClientRect();
+    spawnHearts(rect.left + rect.width / 2, rect.top + rect.height / 2, 5, false);
+  }
 });
-photoInput.addEventListener('change', (event) => {
-  const files = [...event.target.files].filter((file) => file.type.startsWith('image/')).slice(0, 4 - photoStartIndex);
-  files.forEach((file, index) => {
-    const photoIndex = photoStartIndex + index;
-    const url = URL.createObjectURL(file);
-    objectUrls.push(url);
-    photoTargets.filter((target) => Number(target.dataset.photo) === photoIndex).forEach((target) => {
-      const img = target.querySelector('img');
-      img.src = url;
-      target.classList.add('has-photo');
-    });
-  });
-  photoInput.value = '';
-});
-window.addEventListener('pagehide', () => objectUrls.forEach(URL.revokeObjectURL), { once: true });
+
+// La última dedicatoria aparece de forma pausada al llegar al final.
+const closing = document.querySelector('.closing');
+const finalMagic = document.querySelector('#final-magic');
+const finalMessage = document.querySelector('.letter p:last-child');
+const finalObserver = new IntersectionObserver(([entry]) => {
+  if (!entry.isIntersecting) return;
+  finalObserver.disconnect();
+  closing.classList.add('is-magic');
+  finalMagic.classList.add('is-visible');
+  if (!reducedMotion) {
+    for (let i = 0; i < 7; i += 1) {
+      const heart = document.createElement('span');
+      heart.className = 'final-heart';
+      heart.textContent = '♥';
+      heart.style.left = `${6 + Math.random() * 88}%`;
+      heart.style.top = `${62 + Math.random() * 32}%`;
+      heart.style.setProperty('--final-drift', `${(Math.random() - 0.5) * 50}px`);
+      heart.style.setProperty('--final-size', `${11 + Math.random() * 7}px`);
+      heart.style.setProperty('--final-duration', `${3.4 + Math.random() * 1.6}s`);
+      heart.style.setProperty('--final-delay', `${i * 0.22}s`);
+      finalMagic.appendChild(heart);
+    }
+    for (let i = 0; i < 5; i += 1) {
+      const sparkle = document.createElement('span');
+      sparkle.className = 'final-spark';
+      sparkle.textContent = '✦';
+      sparkle.style.left = `${10 + Math.random() * 80}%`;
+      sparkle.style.top = `${58 + Math.random() * 34}%`;
+      sparkle.style.setProperty('--spark-size', `${9 + Math.random() * 7}px`);
+      sparkle.style.setProperty('--spark-duration', `${2.6 + Math.random() * 1.2}s`);
+      sparkle.style.setProperty('--final-delay', `${0.4 + i * 0.3}s`);
+      finalMagic.appendChild(sparkle);
+    }
+    gsap.fromTo(finalMessage, { y: 12, opacity: 0 }, { y: 0, opacity: 1, duration: 1.8, delay: 0.45, ease: 'power2.out' });
+  }
+}, { threshold: 0.35 });
+finalObserver.observe(closing);
 
 const modal = document.querySelector('#photo-modal');
 const modalImage = modal.querySelector('img');
 document.querySelectorAll('.memory-card').forEach((card) => card.addEventListener('click', () => {
   const img = card.querySelector('img');
-  if (!card.classList.contains('has-photo')) {
-    if (!img.complete || img.naturalWidth > 0) return;
-    photoStartIndex = Number(card.dataset.photo);
-    photoInput.click();
-    return;
-  }
   modalImage.src = img.src;
   modal.classList.add('is-open');
   modal.setAttribute('aria-hidden', 'false');
@@ -201,7 +256,7 @@ function createSunflower(scene, x, y, z, size, tilt, petalMaterial, centerMateri
       petal.scale.set(0.02, 0.48 + Math.random() * 0.08, 0.9);
       petal.position.z = 0.01 + ring * 0.012;
       petals.add(petal);
-      flowerHeads.push({ petal, delay: 0.38 + i * 0.018 + ring * 0.05 });
+      flowerHeads.push({ petal, baseX: petal.rotation.x, delay: 0.38 + i * 0.018 + ring * 0.05 });
     }
   }
   const center = new THREE.Mesh(new THREE.SphereGeometry(0.24 * size, 32, 24), centerMaterial);
@@ -263,7 +318,6 @@ async function initFlowers() {
     flower.group.rotation.x = -0.07;
     return flower;
   });
-document.querySelector('.upload-cta').addEventListener('click', () => { photoStartIndex = 0; });
   scene.add(stems);
 
   const wrap = new THREE.Mesh(new THREE.ConeGeometry(1.47, 2.56, 5, 1, true), new THREE.MeshStandardMaterial({ color: 0xc7ad81, roughness: 0.95, side: THREE.DoubleSide }));
@@ -300,6 +354,12 @@ document.querySelector('.upload-cta').addEventListener('click', () => { photoSta
     pointerX = (event.clientX - rect.left) / rect.width - 0.5;
     pointerY = (event.clientY - rect.top) / rect.height - 0.5;
   });
+  stage.addEventListener('pointerleave', () => { pointerX = 0; pointerY = 0; });
+  stage.addEventListener('pointerdown', (event) => {
+    if (reducedMotion) return;
+    gsap.fromTo(bouquet.scale, { x: 1, y: 1, z: 1 }, { x: 1.035, y: 1.035, z: 1.035, duration: 0.18, yoyo: true, repeat: 1, ease: 'sine.inOut', overwrite: true });
+    spawnHearts(event.clientX, event.clientY, 4);
+  }, { passive: true });
   const observer = new IntersectionObserver(([entry]) => { isVisible = entry.isIntersecting; if (isVisible) render(); else cancelAnimationFrame(raf); }, { threshold: 0.01 });
   observer.observe(stage);
   let started = false;
@@ -318,9 +378,12 @@ document.querySelector('.upload-cta').addEventListener('click', () => { photoSta
   document.querySelector('#replay').addEventListener('click', () => { bloom(); document.querySelector('#flores').scrollIntoView({ behavior: reducedMotion ? 'auto' : 'smooth' }); });
   function render(time = 0) {
     if (!isVisible) return;
-    bouquet.rotation.y += ((pointerX * 0.18) - bouquet.rotation.y) * 0.018;
-    bouquet.rotation.x += ((-pointerY * 0.1) - bouquet.rotation.x) * 0.018;
+    bouquet.rotation.y += ((pointerX * 0.18) - bouquet.rotation.y) * 0.045;
+    bouquet.rotation.x += ((-pointerY * 0.1) - bouquet.rotation.x) * 0.045;
     if (!reducedMotion) {
+      flowerHeads.forEach(({ petal, baseX, delay }) => {
+        petal.rotation.x = baseX + Math.sin(time * 0.0007 + delay * 6) * 0.025;
+      });
       motes.children.forEach((mote) => { mote.position.y += Math.sin(time * 0.00045 + mote.userData.phase) * 0.0007; });
     }
     renderer.render(scene, camera);
