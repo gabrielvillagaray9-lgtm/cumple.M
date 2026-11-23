@@ -73,6 +73,87 @@ if (!reducedMotion) {
   gsap.from('.cover-image-wrap', { y: 18, opacity: 0, duration: 1.1, delay: 0.2, ease: 'power2.out' });
 }
 
+// Línea de progreso fina, actualizada como máximo una vez por frame.
+const progressBar = document.querySelector('#scroll-progress');
+let progressFrame = 0;
+function updateScrollProgress() {
+  const doc = document.documentElement;
+  const max = doc.scrollHeight - window.innerHeight;
+  const value = max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 0;
+  progressBar.style.setProperty('--progress', value.toFixed(4));
+  progressFrame = 0;
+}
+function queueScrollProgress() {
+  if (!progressFrame) progressFrame = requestAnimationFrame(updateScrollProgress);
+}
+window.addEventListener('scroll', queueScrollProgress, { passive: true });
+window.addEventListener('resize', queueScrollProgress);
+updateScrollProgress();
+
+// Destellos y pétalos solo al cambiar de sección, con un máximo de elementos vivos.
+const ambientLayer = document.querySelector('#ambient-layer');
+const scenes = [...document.querySelectorAll('.scene')];
+const maxAmbient = 14;
+let currentScene = null;
+let lastAmbientTime = 0;
+
+function ambientCount() {
+  return ambientLayer.querySelectorAll('.ambient-spark, .ambient-petal').length;
+}
+
+function addAmbientSpark() {
+  if (ambientCount() >= maxAmbient) return;
+  const spark = document.createElement('span');
+  spark.className = 'ambient-spark';
+  spark.textContent = '✦';
+  spark.style.left = `${8 + Math.random() * 84}%`;
+  spark.style.top = `${12 + Math.random() * 55}%`;
+  spark.style.setProperty('--spark-size', `${8 + Math.random() * 5}px`);
+  spark.style.setProperty('--ambient-duration', `${2.2 + Math.random() * 1.1}s`);
+  spark.style.setProperty('--ambient-delay', `${Math.random() * 0.5}s`);
+  spark.addEventListener('animationend', () => spark.remove(), { once: true });
+  ambientLayer.appendChild(spark);
+}
+
+function addAmbientPetal() {
+  if (ambientCount() >= maxAmbient) return;
+  const petal = document.createElement('span');
+  petal.className = 'ambient-petal';
+  petal.style.setProperty('--ambient-x', `${4 + Math.random() * 92}%`);
+  petal.style.setProperty('--ambient-drift', `${(Math.random() - 0.5) * 90}px`);
+  petal.style.setProperty('--ambient-spin', `${Math.random() * 180}deg`);
+  petal.style.setProperty('--petal-width', `${8 + Math.random() * 4}px`);
+  petal.style.setProperty('--petal-height', `${13 + Math.random() * 5}px`);
+  petal.style.setProperty('--ambient-duration', `${4.6 + Math.random() * 1.8}s`);
+  petal.style.setProperty('--ambient-delay', `${Math.random() * 0.7}s`);
+  petal.addEventListener('animationend', () => petal.remove(), { once: true });
+  ambientLayer.appendChild(petal);
+}
+
+function triggerAmbient() {
+  if (reducedMotion) return;
+  const now = performance.now();
+  if (now - lastAmbientTime < 1400) return;
+  lastAmbientTime = now;
+  const sparkCount = window.innerWidth < 700 ? 2 : 3;
+  const petalCount = window.innerWidth < 700 ? 2 : 3;
+  for (let i = 0; i < sparkCount; i += 1) addAmbientSpark();
+  for (let i = 0; i < petalCount; i += 1) addAmbientPetal();
+}
+
+const sceneObserver = new IntersectionObserver((entries) => {
+  entries.forEach((entry) => {
+    if (!entry.isIntersecting || entry.intersectionRatio < 0.4) return;
+    const section = entry.target;
+    scenes.forEach((node) => node.classList.toggle('is-current', node === section));
+    if (!currentScene) { currentScene = section; return; }
+    if (section === currentScene) return;
+    currentScene = section;
+    triggerAmbient();
+  });
+}, { threshold: [0.4, 0.6] });
+scenes.forEach((section) => sceneObserver.observe(section));
+
 // Corazones discretos: limitados, espaciados en el tiempo y nunca sobre los controles.
 const heartsLayer = document.querySelector('#hearts-layer');
 const heartColors = ['#fffdf7', '#fff8e9', '#f3d995', '#e8c779'];
