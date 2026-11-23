@@ -5,15 +5,72 @@ gsap.registerPlugin(ScrollTrigger);
 let THREE;
 
 const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-const revealNodes = gsap.utils.toArray('.eyebrow, h1, h2, .cover-subtitle, .discover-link, .flower-description, .memory-card, .memory-quote, .closing-note');
+
+// El contador empieza a las 00:00 del 23 de noviembre de 2008 (hora local).
+// Se comparan fechas del calendario para respetar bisiestos y cambios de hora.
+const birthDate = new Date(2008, 10, 23, 0, 0, 0);
+const ageFields = {
+  years: document.querySelector('[data-unit="years"]'),
+  months: document.querySelector('[data-unit="months"]'),
+  days: document.querySelector('[data-unit="days"]'),
+  hours: document.querySelector('[data-unit="hours"]'),
+  minutes: document.querySelector('[data-unit="minutes"]'),
+  seconds: document.querySelector('[data-unit="seconds"]'),
+};
+
+function daysInMonth(year, monthIndex) {
+  return new Date(year, monthIndex + 1, 0).getDate();
+}
+
+function calculateAge(now = new Date()) {
+  let years = now.getFullYear() - birthDate.getFullYear();
+  let months = now.getMonth() - birthDate.getMonth();
+  let days = now.getDate() - birthDate.getDate();
+
+  if (days < 0) {
+    months -= 1;
+    days += daysInMonth(now.getFullYear(), now.getMonth() - 1);
+  }
+  if (months < 0) {
+    years -= 1;
+    months += 12;
+  }
+
+  return {
+    years,
+    months,
+    days,
+    hours: now.getHours() - birthDate.getHours(),
+    minutes: now.getMinutes() - birthDate.getMinutes(),
+    seconds: now.getSeconds() - birthDate.getSeconds(),
+  };
+}
+
+function renderAge() {
+  const age = calculateAge();
+  for (const [unit, node] of Object.entries(ageFields)) {
+    if (!node) continue;
+    const value = String(age[unit]);
+    if (node.textContent !== value) node.textContent = value;
+  }
+}
+
+function scheduleTick() {
+  renderAge();
+  setTimeout(scheduleTick, 1000 - (Date.now() % 1000) + 20);
+}
+
+renderAge();
+setTimeout(scheduleTick, 1000 - (Date.now() % 1000) + 20);
+document.addEventListener('visibilitychange', () => { if (!document.hidden) renderAge(); });
+
+const revealNodes = gsap.utils.toArray('.cover-copy h1, .discover-link, .flower-copy h2, .birth-date, .age-counter, .counter-note, .flower-button, .memories-heading h2, .memory-card, .memory-quote, .letter p, .back-top');
 if (!reducedMotion) {
   revealNodes.forEach((node) => gsap.from(node, {
-    y: 22, opacity: 0, duration: 0.9, ease: 'power2.out',
-    scrollTrigger: { trigger: node, start: 'top 88%', once: true },
+    y: 16, opacity: 0, duration: 0.8, ease: 'power2.out',
+    scrollTrigger: { trigger: node, start: 'top 90%', once: true },
   }));
-  gsap.from('.cover-image-wrap', { x: 34, opacity: 0, duration: 1.2, delay: 0.25, ease: 'power2.out' });
-  gsap.to('.cover-stamp', { rotation: 8, y: -5, duration: 3, yoyo: true, repeat: -1, ease: 'sine.inOut' });
-  gsap.to('.closing-sun', { scale: 1.08, duration: 4, yoyo: true, repeat: -1, ease: 'sine.inOut' });
+  gsap.from('.cover-image-wrap', { y: 18, opacity: 0, duration: 1.1, delay: 0.2, ease: 'power2.out' });
 }
 
 // Personal photos stay in memory in this browser tab. Nothing is uploaded.
@@ -221,8 +278,8 @@ document.querySelector('.upload-cta').addEventListener('click', () => { photoSta
   scene.add(bow);
 
   const motes = new THREE.Group();
-  for (let i = 0; i < 38; i += 1) {
-    const mote = new THREE.Mesh(new THREE.SphereGeometry(0.018 + Math.random() * 0.022, 8, 8), new THREE.MeshBasicMaterial({ color: i % 3 ? 0xf5d58e : 0xfff1cc, transparent: true, opacity: 0.7 }));
+  for (let i = 0; i < 16; i += 1) {
+    const mote = new THREE.Mesh(new THREE.SphereGeometry(0.018 + Math.random() * 0.022, 8, 8), new THREE.MeshBasicMaterial({ color: i % 3 ? 0xf5d58e : 0xfff1cc, transparent: true, opacity: 0.45 }));
     mote.position.set((Math.random() - 0.5) * 6.5, (Math.random() - 0.45) * 5, Math.random() * 2 - 0.8); mote.userData.phase = Math.random() * Math.PI * 2; motes.add(mote);
   }
   scene.add(motes);
@@ -263,7 +320,9 @@ document.querySelector('.upload-cta').addEventListener('click', () => { photoSta
     if (!isVisible) return;
     bouquet.rotation.y += ((pointerX * 0.18) - bouquet.rotation.y) * 0.018;
     bouquet.rotation.x += ((-pointerY * 0.1) - bouquet.rotation.x) * 0.018;
-    motes.children.forEach((mote) => { mote.position.y += Math.sin(time * 0.00045 + mote.userData.phase) * 0.0007; });
+    if (!reducedMotion) {
+      motes.children.forEach((mote) => { mote.position.y += Math.sin(time * 0.00045 + mote.userData.phase) * 0.0007; });
+    }
     renderer.render(scene, camera);
     raf = requestAnimationFrame(render);
   }
