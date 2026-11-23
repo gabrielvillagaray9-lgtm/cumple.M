@@ -64,7 +64,7 @@ renderAge();
 setTimeout(scheduleTick, 1000 - (Date.now() % 1000) + 20);
 document.addEventListener('visibilitychange', () => { if (!document.hidden) renderAge(); });
 
-const revealNodes = gsap.utils.toArray('.cover-copy h1, .discover-link, .flower-copy h2, .birth-date, .age-counter, .counter-note, .flower-button, .memory-card, .memory-quote, .envelope, .letter p:not(:last-child), .back-top');
+const revealNodes = gsap.utils.toArray('.cover-copy h1, .cover-translation, .cover-rouhi, .discover-link, .flower-copy h2, .birth-date, .age-counter, .counter-note, .flower-button, .memory-card, .memory-quote, .envelope, .letter p:not(:last-child), .back-top');
 if (!reducedMotion) {
   revealNodes.forEach((node) => gsap.from(node, {
     y: 16, opacity: 0, duration: 0.8, ease: 'power2.out',
@@ -456,7 +456,6 @@ async function initFlowers() {
     gsap.fromTo(bouquet.rotation, { z: -0.035 }, { z: 0, duration: 2.4, ease: 'sine.out' });
   }
   document.querySelector('#bloom').addEventListener('click', bloom);
-  document.querySelector('#replay').addEventListener('click', () => { bloom(); document.querySelector('#flores').scrollIntoView({ behavior: reducedMotion ? 'auto' : 'smooth' }); });
   function render(time = 0) {
     if (!isVisible) return;
     bouquet.rotation.y += ((pointerX * 0.18) - bouquet.rotation.y) * 0.045;

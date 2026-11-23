@@ -30,34 +30,6 @@ button, a { font: inherit; color: inherit; }
 a { text-decoration: none; }
 button { cursor: pointer; }
 
-.topbar {
-  height: 72px;
-  border-bottom: 1px solid var(--line);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 8%;
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 15;
-}
-
-.wordmark { font-family: var(--title); font-size: 19px; letter-spacing: -0.2px; }
-
-.replay-button {
-  background: none;
-  border: 0;
-  padding: 6px 0;
-  color: var(--muted);
-  font-size: 13px;
-  border-bottom: 1px solid transparent;
-  transition: color 0.25s, border-color 0.25s;
-}
-
-.replay-button:hover { color: var(--gold); border-color: var(--gold); }
-
 .scroll-progress {
   position: fixed;
   top: 0;
@@ -152,7 +124,7 @@ button { cursor: pointer; }
   min-height: 760px;
   height: 100svh;
   max-height: 1050px;
-  padding: 92px 10% 56px;
+  padding: 64px 10% 56px;
   display: grid;
   grid-template-columns: 1fr 1fr;
   align-items: center;
@@ -164,19 +136,41 @@ button { cursor: pointer; }
   background-size: 160px 160px, auto, auto, auto;
 }
 
-.cover-copy { position: relative; z-index: 2; padding: 4vh 0; }
+.cover-copy { position: relative; z-index: 2; padding: 4vh 0; text-align: right; }
 
 .cover h1 {
-  font-family: var(--title);
-  font-size: clamp(66px, 8.6vw, 132px);
+  font-family: 'Amiri', 'Noto Naskh Arabic', serif;
+  font-size: clamp(34px, 3.6vw, 60px);
   font-weight: 400;
-  letter-spacing: -4px;
-  line-height: 1.02;
-  margin: 0 0 34px;
+  letter-spacing: 0;
+  line-height: 1.6;
+  margin: 0 0 18px;
   color: #494238;
+  direction: rtl;
+  text-align: right;
+  unicode-bidi: isolate;
 }
 
-.cover h1 em { font-style: italic; color: var(--gold); }
+.cover h1 > span { display: block; }
+.cover h1 > span + span { margin-top: 0.12em; }
+.cover h1 .arabic-gold { color: var(--gold); }
+
+.cover-translation {
+  margin: 0 0 10px;
+  font-family: var(--title);
+  font-style: italic;
+  font-size: clamp(15px, 1.4vw, 19px);
+  line-height: 1.6;
+  color: var(--muted);
+}
+
+.cover-rouhi {
+  margin: 0 0 30px;
+  font-family: var(--title);
+  font-size: 14px;
+  letter-spacing: 0.02em;
+  color: var(--gold);
+}
 
 .discover-link {
   display: inline-flex;
@@ -614,9 +608,8 @@ button { cursor: pointer; }
 .memory-card-last img { object-position: center 52%; }
 
 @media (max-width: 1100px) {
-  .topbar { padding: 0 6%; }
   .cover { padding-left: 7%; padding-right: 7%; }
-  .cover h1 { font-size: clamp(64px, 9vw, 108px); letter-spacing: -3px; }
+  .cover h1 { font-size: clamp(34px, 3.8vw, 52px); }
   .flowers { padding-left: 6%; padding-right: 6%; gap: 1%; }
   .flower-copy h2 { font-size: clamp(28px, 3.2vw, 44px); }
   .age-counter { font-size: clamp(21px, 2.7vw, 32px); }
@@ -641,24 +634,22 @@ button { cursor: pointer; }
 }
 
 @media (max-width: 600px) {
-  .topbar { height: 62px; padding: 0 6%; }
-  .wordmark { font-size: 16px; }
-  .replay-button { font-size: 11px; }
-
   .cover {
     height: auto;
-    min-height: 820px;
+    min-height: 780px;
     max-height: none;
     display: flex;
     flex-direction: column;
     align-items: stretch;
     justify-content: flex-start;
-    padding: 110px 8% 68px;
-    gap: 32px;
+    padding: 72px 8% 68px;
+    gap: 26px;
   }
 
   .cover-copy { padding: 0; }
-  .cover h1 { font-size: clamp(64px, 17vw, 98px); letter-spacing: -4px; line-height: 0.98; margin-bottom: 26px; }
+  .cover h1 { font-size: clamp(26px, 8vw, 46px); line-height: 1.6; margin-bottom: 16px; }
+  .cover-translation { font-size: 15px; margin-bottom: 8px; }
+  .cover-rouhi { font-size: 13px; margin-bottom: 24px; }
   .discover-link { font-size: 13px; }
   .cover-image-wrap { width: 82%; align-self: flex-end; margin: 0 1% 0 0; }
   .cover-image-photo { width: 100%; height: 360px; min-height: 0; }
